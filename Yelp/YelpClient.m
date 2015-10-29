@@ -10,10 +10,10 @@
 #import "YelpBusiness.h"
 
 // You can register for Yelp API keys here: http://www.yelp.com/developers/manage_api_keys
-NSString * const kYelpConsumerKey = @"vxKwwcR_NMQ7WaEiQBK_CA";
-NSString * const kYelpConsumerSecret = @"33QCvh5bIF5jIHR5klQr7RtBDhQ";
-NSString * const kYelpToken = @"uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV";
-NSString * const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
+NSString * const kYelpConsumerKey = @"_SyHDW6rW_YFV8SbrUS5jw";
+NSString * const kYelpConsumerSecret = @"hnUr1aQQYIVyS5wa6zc3KdiyQEI";
+NSString * const kYelpToken = @"V-492ic0gWf_Rkf03NNRdhBFvV6YYNzS";
+NSString * const kYelpTokenSecret = @"WorHcSRNd_KUAmIU-PBwcALao3Q";
 
 @interface YelpClient ()
 
