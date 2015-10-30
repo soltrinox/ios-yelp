@@ -9,6 +9,7 @@
 #import "MainViewController.h"
 #import "YelpBusiness.h"
 #import "BusinessCell.h"
+#import "FiltersViewController.h"
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -22,8 +23,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
+    self.title = @"Yelp";
+
+    [self setupNavigationBar];
+    [self setupTableView];
     
     [YelpBusiness searchWithTerm:@"Restaurants"
                         sortMode:YelpSortModeBestMatched
@@ -32,11 +35,20 @@
                       completion:^(NSArray *businesses, NSError *error) {
                           self.businesses = businesses;
                           [self.tableView reloadData];
-                          for (YelpBusiness *business in businesses) {
-                              NSLog(@"%@", business);
-                          }
                       }];
+}
 
+- (void)setupNavigationBar {
+    UIBarButtonItem *filtersButton = [[UIBarButtonItem alloc] initWithTitle:@"Filters"
+                                                                      style:UIBarButtonItemStylePlain
+                                                                     target:self
+                                                                     action:@selector(onFiltersTapped)];
+    self.navigationItem.leftBarButtonItem = filtersButton;
+}
+
+- (void)setupTableView {
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
     [self.tableView registerNib:[UINib nibWithNibName:@"BusinessCell" bundle:nil] forCellReuseIdentifier:@"BusinessCell"];
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.estimatedRowHeight = 88;
@@ -52,6 +64,12 @@
     BusinessCell *cell = [tableView dequeueReusableCellWithIdentifier:@"BusinessCell"];
     cell.business = self.businesses[indexPath.row];
     return cell;
+}
+
+- (void)onFiltersTapped {
+    FiltersViewController *vc = [[FiltersViewController alloc] init];
+    UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:nvc animated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning {

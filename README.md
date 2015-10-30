@@ -5,6 +5,7 @@
 Time spent: **X** hours spent in total
 
 10/28 - 2 hrs
+10/29 - 2 hrs
 
 ## User Stories
 
