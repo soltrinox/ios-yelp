@@ -16,6 +16,9 @@
                 <subviews>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xah-4v-xB8">
                         <rect key="frame" x="263" y="8" width="51" height="31"/>
+                        <connections>
+                            <action selector="onValueChanged:" destination="KGk-i7-Jjw" eventType="valueChanged" id="JmZ-Sr-cL4"/>
+                        </connections>
                     </switch>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Toggle 1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sZK-KK-hz3">
                         <rect key="frame" x="8" y="13" width="64" height="19.5"/>
@@ -33,6 +36,10 @@
                     <constraint firstAttribute="trailing" secondItem="Xah-4v-xB8" secondAttribute="trailing" constant="8" id="f5r-CY-txd"/>
                 </constraints>
             </tableViewCellContentView>
+            <connections>
+                <outlet property="filterLabel" destination="sZK-KK-hz3" id="aox-vY-F28"/>
+                <outlet property="filterSwitch" destination="Xah-4v-xB8" id="Cv3-oP-XCF"/>
+            </connections>
             <point key="canvasLocation" x="171" y="393"/>
         </tableViewCell>
     </objects>

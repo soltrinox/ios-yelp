@@ -9,9 +9,9 @@
 #import "FiltersViewController.h"
 #import "FiltersCell.h"
 
-@interface FiltersViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface FiltersViewController () <UITableViewDataSource, UITableViewDelegate, FiltersCellDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-
+@property (strong, nonatomic) NSMutableDictionary *filterValues;
 @end
 
 @implementation FiltersViewController
@@ -36,6 +36,7 @@
     self.tableView.dataSource = self;
     [self.tableView registerNib:[UINib nibWithNibName:@"FiltersCell" bundle:nil] forCellReuseIdentifier:@"FiltersCell"];
     self.tableView.rowHeight = 48;
+    self.filterValues = [NSMutableDictionary dictionary];
 }
 
 #pragma mark - Table view methods
@@ -46,8 +47,23 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FiltersCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FiltersCell"];
+
+    cell.delegate = self;
+
+    NSNumber *value = self.filterValues[@(indexPath.row)];
+    if (!value) {
+        value = @(NO);
+    }
+    cell.filterSwitch.on = [value boolValue];
     
     return cell;
+}
+
+- (void)filtersCell:(FiltersCell *)filtersCell valueDidChange:(BOOL)value {
+    NSLog(@"A Cell told me a value change");
+
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:filtersCell];
+    self.filterValues[@(indexPath.row)] = @(value);
 }
 
 - (void)searchButtonTapped {

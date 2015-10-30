@@ -19,5 +19,9 @@
 
     // Configure the view for the selected state
 }
+- (IBAction)onValueChanged:(UISwitch *)sender {
+    NSLog(@"Cell Value Changed");
+    [self.delegate filtersCell:self valueDidChange:sender.on];
+}
 
 @end
