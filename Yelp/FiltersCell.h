@@ -19,7 +19,9 @@
 @interface FiltersCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *filterLabel;
-@property (weak, nonatomic) IBOutlet UISwitch *filterSwitch;
+@property (assign, nonatomic) BOOL on;
 @property (weak, nonatomic) id<FiltersCellDelegate> delegate;
+
+- (void)setOn:(BOOL)on animated:(BOOL)animated;
 
 @end

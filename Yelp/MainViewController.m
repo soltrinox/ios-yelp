@@ -15,6 +15,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *businesses;
+- (void) fetchBusinessesWithQuery:(NSString *)query params:(NSArray *)params;
 
 @end
 
@@ -27,16 +28,10 @@
 
     [self setupNavigationBar];
     [self setupTableView];
-    
-    [YelpBusiness searchWithTerm:@"Restaurants"
-                        sortMode:YelpSortModeBestMatched
-                      categories:@[@"burgers"]
-                           deals:NO
-                      completion:^(NSArray *businesses, NSError *error) {
-                          self.businesses = businesses;
-                          [self.tableView reloadData];
-                      }];
+    [self fetchBusinessesWithQuery:@"Restaurants" params:nil];
 }
+
+#pragma mark - Setup Methods
 
 - (void)setupNavigationBar {
     UIBarButtonItem *filtersButton = [[UIBarButtonItem alloc] initWithTitle:@"Filters"
@@ -44,6 +39,7 @@
                                                                      target:self
                                                                      action:@selector(onFiltersTapped)];
     self.navigationItem.leftBarButtonItem = filtersButton;
+    self.navigationItem.titleView = [[UISearchBar alloc] init];
 }
 
 - (void)setupTableView {
@@ -65,6 +61,21 @@
     cell.business = self.businesses[indexPath.row];
     return cell;
 }
+
+#pragma mark - API Methods
+
+- (void) fetchBusinessesWithQuery:(NSString *)query params:(NSArray *)params {
+    [YelpBusiness searchWithTerm:query
+                        sortMode:YelpSortModeBestMatched
+                      categories:params
+                           deals:YES
+                      completion:^(NSArray *businesses, NSError *error) {
+                          self.businesses = businesses;
+                          [self.tableView reloadData];
+                      }];
+}
+
+#pragma mark - Events Methods
 
 - (void)onFiltersTapped {
     FiltersViewController *vc = [[FiltersViewController alloc] init];

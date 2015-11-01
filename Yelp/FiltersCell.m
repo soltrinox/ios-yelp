@@ -8,6 +8,12 @@
 
 #import "FiltersCell.h"
 
+@interface FiltersCell ()
+
+@property (weak, nonatomic) IBOutlet UISwitch *filterSwitch;
+
+@end
+
 @implementation FiltersCell
 
 - (void)awakeFromNib {
@@ -22,6 +28,15 @@
 - (IBAction)onValueChanged:(UISwitch *)sender {
     NSLog(@"Cell Value Changed");
     [self.delegate filtersCell:self valueDidChange:sender.on];
+}
+
+- (void)setOn:(BOOL)on {
+    [self setOn:on animated:NO];
+}
+
+- (void)setOn:(BOOL)on animated:(BOOL)animated {
+    _on = on;
+    [self.filterSwitch setOn:on animated:animated];
 }
 
 @end
