@@ -11,7 +11,7 @@
 #import "BusinessCell.h"
 #import "FiltersViewController.h"
 
-@interface MainViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, FiltersViewControllerDelegate, UISearchBarDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *businesses;
@@ -39,7 +39,9 @@
                                                                      target:self
                                                                      action:@selector(onFiltersTapped)];
     self.navigationItem.leftBarButtonItem = filtersButton;
-    self.navigationItem.titleView = [[UISearchBar alloc] init];
+    UISearchBar *searchBar = [[UISearchBar alloc] init];
+    searchBar.delegate = self;
+    self.navigationItem.titleView = searchBar;
 }
 
 - (void)setupTableView {
@@ -75,10 +77,22 @@
                       }];
 }
 
+- (void)filtersViewController:(FiltersViewController *)filtersViewController didChangeFilters:(NSArray *)filters {
+
+    [self fetchBusinessesWithQuery:@"restaurants" params:filters];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    NSLog(@"SEARCH: %@", searchText);
+    [self fetchBusinessesWithQuery:[searchText stringByAppendingString:@" restaurants"]  params:nil];
+}
+
 #pragma mark - Events Methods
 
 - (void)onFiltersTapped {
     FiltersViewController *vc = [[FiltersViewController alloc] init];
+    vc.delegate = self;
+
     UINavigationController *nvc = [[UINavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:nvc animated:YES completion:nil];
 }

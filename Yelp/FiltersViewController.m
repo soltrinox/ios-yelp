@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSMutableSet *selectedCategories;
 @property (strong, nonatomic) NSArray *categories;
+@property (nonatomic, readonly) NSArray *filters;
 
 - (void)initCategories;
 
@@ -43,11 +44,12 @@
 
 - (void)setupNavigation {
     self.navigationItem.title = @"Filters";
-    UIBarButtonItem *searchItem = [[UIBarButtonItem alloc]
-                                   initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
-                                   target:self
-                                   action:@selector(searchButtonTapped)];
-    self.navigationItem.rightBarButtonItem = searchItem;
+    UIBarButtonItem *applyButton = [[UIBarButtonItem alloc] initWithTitle:@"Apply" style:UIBarButtonItemStylePlain target:self action:@selector(onApplyButton)];
+
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onCancelButton)];
+
+    self.navigationItem.rightBarButtonItem = applyButton;
+    self.navigationItem.leftBarButtonItem = cancelButton;
 }
 
 - (void)setupTableView {
@@ -77,8 +79,6 @@
 #pragma mark - Switch cell delegate methods
 
 - (void)filtersCell:(FiltersCell *)filtersCell valueDidChange:(BOOL)value {
-    NSLog(@"A Cell told me a value change");
-
     NSIndexPath *indexPath = [self.tableView indexPathForCell:filtersCell];
 
     if (value) {
@@ -93,7 +93,24 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)searchButtonTapped {
+- (NSArray *)filters {
+    NSMutableArray *filters = [NSMutableArray array];
+
+    if (self.selectedCategories.count > 0) {
+        for (NSDictionary *category in self.selectedCategories) {
+            [filters addObject:category[@"code"]];
+        }
+    }
+
+    return filters;
+}
+
+- (void)onApplyButton {
+    [self.delegate filtersViewController:self didChangeFilters:self.filters];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)onCancelButton {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
