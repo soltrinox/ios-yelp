@@ -12,9 +12,11 @@
 @interface FiltersViewController () <UITableViewDataSource, UITableViewDelegate, FiltersCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSMutableSet *selectedCategories;
+@property (strong, nonatomic) NSMutableArray *selectedFilters;
+@property (strong, nonatomic) NSArray *allFilters;
 @property (strong, nonatomic) NSArray *categories;
-@property (nonatomic, readonly) NSArray *filters;
+@property (strong, nonatomic) NSArray *sortBy;
+@property (nonatomic, readonly) NSDictionary *filters;
 
 - (void)initCategories;
 
@@ -27,6 +29,8 @@
 
     if (self) {
         [self initCategories];
+        [self initSortBy];
+        [self initAllFilters];
     }
 
     return self;
@@ -36,8 +40,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setupNavigation];
     [self setupTableView];
+    [self initSelectedFilters];
+    [self setupNavigation];
 }
 
 #pragma mark - Setup methods
@@ -57,21 +62,33 @@
     self.tableView.dataSource = self;
     [self.tableView registerNib:[UINib nibWithNibName:@"FiltersCell" bundle:nil] forCellReuseIdentifier:@"FiltersCell"];
     self.tableView.rowHeight = 48;
-    self.selectedCategories = [NSMutableSet set];
+    self.selectedFilters = [NSMutableArray array];
+    [self.tableView reloadData];
 }
 
 #pragma mark - Table view methods
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return self.allFilters.count;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.categories.count;
+    NSArray *allFilters = self.allFilters[section][@"filters"];
+    return allFilters.count;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return [self.allFilters objectAtIndex:section][@"name"];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FiltersCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FiltersCell"];
 
     cell.delegate = self;
-    cell.filterLabel.text = self.categories[indexPath.row][@"name"];
-    cell.on = [self.selectedCategories containsObject:self.categories[indexPath.row]];
+
+    NSDictionary *row = self.allFilters[indexPath.section][@"filters"][indexPath.row];
+    cell.filterLabel.text = row[@"name"];
+    cell.on = [self.selectedFilters[indexPath.section][@"filters"] containsObject:self.allFilters[indexPath.section][@"filters"][indexPath.row]];
 
     return cell;
 }
@@ -82,9 +99,9 @@
     NSIndexPath *indexPath = [self.tableView indexPathForCell:filtersCell];
 
     if (value) {
-        [self.selectedCategories addObject:self.categories[indexPath.row]];
+        [self.selectedFilters[indexPath.section][@"filters"] addObject:self.allFilters[indexPath.section][@"filters"][indexPath.row]];
     } else {
-        [self.selectedCategories removeObject:self.categories[indexPath.row]];
+        [self.selectedFilters[indexPath.section][@"filters"] removeObject:self.allFilters[indexPath.section][@"filters"][indexPath.row]];
     }
 }
 
@@ -93,14 +110,29 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (NSArray *)filters {
-    NSMutableArray *filters = [NSMutableArray array];
+- (NSDictionary *)filters {
+    NSMutableDictionary *filters = [NSMutableDictionary dictionary];
 
-    if (self.selectedCategories.count > 0) {
-        for (NSDictionary *category in self.selectedCategories) {
-            [filters addObject:category[@"code"]];
+    for (int i = 0; i < self.selectedFilters.count; i++) {
+        NSDictionary *section = self.selectedFilters[i];
+        if ([section[@"filters"] count] <= 0){
+            continue;
+        }
+
+        if ([section[@"name"]  isEqual: @"Categories"]) {
+            if ([section[@"filters"] count] > 0) {
+                [filters setObject:[[NSMutableArray alloc] init] forKey:section[@"name"]];
+
+                for (NSDictionary *category in section[@"filters"]) {
+                    [filters[section[@"name"]] addObject:category[@"code"]];
+                }
+            }
+        } else {
+            [filters setObject:[[NSNumber alloc] initWithInt:[section[@"filters"][0][@"code"] intValue]] forKey:section[@"name"]];
         }
     }
+
+    NSLog(@"Filters: %@", filters);
 
     return filters;
 }
@@ -112,6 +144,28 @@
 
 - (void)onCancelButton {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+- (void)initAllFilters {
+    self.allFilters =
+    @[@{@"name": @"Sort By", @"filters": self.sortBy},
+      @{@"name": @"Categories", @"filters": self.categories}];
+}
+
+- (void)initSelectedFilters {
+    NSMutableArray *defaults = [NSMutableArray arrayWithArray:
+                                @[@{@"name": @"Sort By", @"filters": [NSMutableArray array]},
+                                  @{@"name": @"Categories", @"filters": [NSMutableArray array]}]];
+
+    self.selectedFilters = defaults;
+}
+
+- (void) initSortBy {
+    self.sortBy =
+    @[@{@"name": @"Best Matched", @"code": @"0"},
+      @{@"name": @"Distance", @"code": @"1"},
+      @{@"name": @"Highest Rated", @"code": @"2"}];
 }
 
 - (void) initCategories {

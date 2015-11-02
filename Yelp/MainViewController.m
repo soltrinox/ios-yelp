@@ -15,7 +15,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *businesses;
-- (void) fetchBusinessesWithQuery:(NSString *)query params:(NSArray *)params;
+- (void) fetchBusinessesWithQuery:(NSString *)query filters:(NSDictionary *)filters;
 
 @end
 
@@ -28,7 +28,7 @@
 
     [self setupNavigationBar];
     [self setupTableView];
-    [self fetchBusinessesWithQuery:@"Restaurants" params:nil];
+    [self fetchBusinessesWithQuery:@"Restaurants" filters:nil];
 }
 
 #pragma mark - Setup Methods
@@ -66,10 +66,13 @@
 
 #pragma mark - API Methods
 
-- (void) fetchBusinessesWithQuery:(NSString *)query params:(NSArray *)params {
+- (void) fetchBusinessesWithQuery:(NSString *)query filters:(NSDictionary *)filters {
+    NSArray *categories = [filters objectForKey:@"Categories"] ? filters[@"Categories"] : nil;
+    int sortBy = [filters objectForKey:@"Sort By"] ? [filters[@"Sort By"] intValue] : 0;
+
     [YelpBusiness searchWithTerm:query
-                        sortMode:YelpSortModeBestMatched
-                      categories:params
+                        sortMode:sortBy
+                      categories:categories
                            deals:YES
                       completion:^(NSArray *businesses, NSError *error) {
                           self.businesses = businesses;
@@ -77,14 +80,16 @@
                       }];
 }
 
-- (void)filtersViewController:(FiltersViewController *)filtersViewController didChangeFilters:(NSArray *)filters {
+- (void)filtersViewController:(FiltersViewController *)filtersViewController didChangeFilters:(NSDictionary *)filters {
 
-    [self fetchBusinessesWithQuery:@"restaurants" params:filters];
+    NSLog(@"%@", filters);
+    [self fetchBusinessesWithQuery:@"restaurants" filters:filters];
+
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     NSLog(@"SEARCH: %@", searchText);
-    [self fetchBusinessesWithQuery:[searchText stringByAppendingString:@" restaurants"]  params:nil];
+    [self fetchBusinessesWithQuery:[searchText stringByAppendingString:@" restaurants"]  filters:nil];
 }
 
 #pragma mark - Events Methods
