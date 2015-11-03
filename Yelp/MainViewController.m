@@ -67,13 +67,17 @@
 #pragma mark - API Methods
 
 - (void) fetchBusinessesWithQuery:(NSString *)query filters:(NSDictionary *)filters {
-    NSArray *categories = [filters objectForKey:@"Categories"] ? filters[@"Categories"] : nil;
-    int sortBy = [filters objectForKey:@"Sort By"] ? [filters[@"Sort By"] intValue] : 0;
+
+    NSArray *categories = [filters objectForKey:@"categories"] ? filters[@"categories"] : nil;
+    int sortBy = [filters objectForKey:@"sort_by"] ? [filters[@"sort_by"] intValue] : 0;
+    float distance = [filters objectForKey:@"distance"] ? [filters[@"distance"] floatValue]: 0;
+    BOOL deals = [filters objectForKey:@"show_deals"] ? [filters[@"show_deals"] boolValue]: NO;
 
     [YelpBusiness searchWithTerm:query
                         sortMode:sortBy
                       categories:categories
-                           deals:YES
+                        distance:distance
+                           deals:deals
                       completion:^(NSArray *businesses, NSError *error) {
                           self.businesses = businesses;
                           [self.tableView reloadData];

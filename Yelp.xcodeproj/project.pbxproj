@@ -29,6 +29,8 @@
 		8EC4D3501BE1DCA90038D132 /* BusinessCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EC4D34E1BE1DCA90038D132 /* BusinessCell.xib */; };
 		8EC53D131BE3C05100FD408A /* FiltersCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC53D111BE3C05100FD408A /* FiltersCell.m */; };
 		8EC53D141BE3C05100FD408A /* FiltersCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EC53D121BE3C05100FD408A /* FiltersCell.xib */; };
+		8EC5AE961BE86D9F000385CB /* CheckCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E57C2121BE86B5500CB0698 /* CheckCell.m */; };
+		8EC5AE971BE86DA6000385CB /* CheckCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E57C2131BE86B5500CB0698 /* CheckCell.xib */; };
 		8ED9806A1BE3032D00260745 /* FiltersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ED980681BE3032D00260745 /* FiltersViewController.m */; };
 		8ED9806B1BE3032D00260745 /* FiltersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8ED980691BE3032D00260745 /* FiltersViewController.xib */; };
 /* End PBXBuildFile section */
@@ -68,6 +70,9 @@
 		42FD6C6B18DC286B000BF2B9 /* YelpTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "YelpTests-Info.plist"; sourceTree = "<group>"; };
 		42FD6C6D18DC286B000BF2B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		42FD6C6F18DC286B000BF2B9 /* YelpTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YelpTests.m; sourceTree = "<group>"; };
+		8E57C2111BE86B5500CB0698 /* CheckCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckCell.h; sourceTree = "<group>"; };
+		8E57C2121BE86B5500CB0698 /* CheckCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CheckCell.m; sourceTree = "<group>"; };
+		8E57C2131BE86B5500CB0698 /* CheckCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CheckCell.xib; sourceTree = "<group>"; };
 		8EC4D34C1BE1DCA90038D132 /* BusinessCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusinessCell.h; sourceTree = "<group>"; };
 		8EC4D34D1BE1DCA90038D132 /* BusinessCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessCell.m; sourceTree = "<group>"; };
 		8EC4D34E1BE1DCA90038D132 /* BusinessCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BusinessCell.xib; sourceTree = "<group>"; };
@@ -229,6 +234,9 @@
 				8EC4D34C1BE1DCA90038D132 /* BusinessCell.h */,
 				8EC4D34D1BE1DCA90038D132 /* BusinessCell.m */,
 				8EC4D34E1BE1DCA90038D132 /* BusinessCell.xib */,
+				8E57C2111BE86B5500CB0698 /* CheckCell.h */,
+				8E57C2121BE86B5500CB0698 /* CheckCell.m */,
+				8E57C2131BE86B5500CB0698 /* CheckCell.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -338,6 +346,7 @@
 				42FD6C5518DC286B000BF2B9 /* InfoPlist.strings in Resources */,
 				8EC53D141BE3C05100FD408A /* FiltersCell.xib in Resources */,
 				11F304F81BDC02C1000ED8EF /* LaunchScreen.storyboard in Resources */,
+				8EC5AE971BE86DA6000385CB /* CheckCell.xib in Resources */,
 				420474FC18DC2B2100E88E07 /* MainViewController.xib in Resources */,
 				8ED9806B1BE3032D00260745 /* FiltersViewController.xib in Resources */,
 				42FD6C5D18DC286B000BF2B9 /* Images.xcassets in Resources */,
@@ -407,6 +416,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EC5AE961BE86D9F000385CB /* CheckCell.m in Sources */,
 				8ED9806A1BE3032D00260745 /* FiltersViewController.m in Sources */,
 				8EC53D131BE3C05100FD408A /* FiltersCell.m in Sources */,
 				8E5FF3691BE1E2C2003C75A4 /* BusinessCell.m in Sources */,

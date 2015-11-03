@@ -49,6 +49,7 @@ NSString * const kYelpTokenSecret = @"WorHcSRNd_KUAmIU-PBwcALao3Q";
     return [self searchWithTerm:term
                        sortMode:YelpSortModeBestMatched
                      categories:nil
+                       distance:0
                           deals:NO
                      completion:completion];
 }
@@ -56,6 +57,7 @@ NSString * const kYelpTokenSecret = @"WorHcSRNd_KUAmIU-PBwcALao3Q";
 - (AFHTTPRequestOperation *)searchWithTerm:(NSString *)term
                                   sortMode:(YelpSortMode)sortMode
                                 categories:(NSArray *)categories
+                                  distance:(float)distance
                                      deals:(BOOL)hasDeal
                                 completion:(void (^)(NSArray *businesses, NSError *error))completion {
     
@@ -65,6 +67,15 @@ NSString * const kYelpTokenSecret = @"WorHcSRNd_KUAmIU-PBwcALao3Q";
                                          @"sort": [NSNumber numberWithInt:sortMode]}
                                        mutableCopy];
 
+    if (distance) {
+        // Convert Miles to Meters
+        // Max 40,000 Meters (25 Miles)
+        float distanceInMeters = distance / 0.00062137;
+        if (distanceInMeters > 40000) {
+            distanceInMeters = 40000;
+        }
+        parameters[@"distance_filter"] = [NSString stringWithFormat:@"%.f", distanceInMeters];
+    }
     if (categories && categories.count > 0) {
         parameters[@"category_filter"] = [categories componentsJoinedByString:@","];
     }

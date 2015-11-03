@@ -29,6 +29,7 @@
 + (void)searchWithTerm:(NSString *)term
               sortMode:(YelpSortMode)sortMode
             categories:(NSArray *)categories
+              distance:(float)distance
                  deals:(BOOL)hasDeal
             completion:(void (^)(NSArray *businesses, NSError *error))completion;
 

@@ -8,14 +8,14 @@
 
 #import "FiltersViewController.h"
 #import "FiltersCell.h"
+#import "CheckCell.h"
 
-@interface FiltersViewController () <UITableViewDataSource, UITableViewDelegate, FiltersCellDelegate>
+@interface FiltersViewController () <UITableViewDataSource, UITableViewDelegate, FiltersCellDelegate, CheckCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *selectedFilters;
-@property (strong, nonatomic) NSArray *allFilters;
+@property (strong, nonatomic) NSMutableArray *allFilters;
 @property (strong, nonatomic) NSArray *categories;
-@property (strong, nonatomic) NSArray *sortBy;
 @property (nonatomic, readonly) NSDictionary *filters;
 
 - (void)initCategories;
@@ -29,7 +29,6 @@
 
     if (self) {
         [self initCategories];
-        [self initSortBy];
         [self initAllFilters];
     }
 
@@ -50,7 +49,6 @@
 - (void)setupNavigation {
     self.navigationItem.title = @"Filters";
     UIBarButtonItem *applyButton = [[UIBarButtonItem alloc] initWithTitle:@"Apply" style:UIBarButtonItemStylePlain target:self action:@selector(onApplyButton)];
-
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onCancelButton)];
 
     self.navigationItem.rightBarButtonItem = applyButton;
@@ -60,7 +58,8 @@
 - (void)setupTableView {
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [self.tableView registerNib:[UINib nibWithNibName:@"FiltersCell" bundle:nil] forCellReuseIdentifier:@"FiltersCell"];
+    [self.tableView registerNib:[UINib nibWithNibName:@"FiltersCell" bundle:nil] forCellReuseIdentifier:@"filtersCell"];
+    [self.tableView registerNib:[UINib nibWithNibName:@"CheckCell" bundle:nil] forCellReuseIdentifier:@"checkCell"];
     self.tableView.rowHeight = 48;
     self.selectedFilters = [NSMutableArray array];
     [self.tableView reloadData];
@@ -73,7 +72,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSArray *allFilters = self.allFilters[section][@"filters"];
+    NSMutableArray *allFilters = self.allFilters[section][@"filters"];
     return allFilters.count;
 }
 
@@ -82,7 +81,9 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    FiltersCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FiltersCell"];
+
+    NSArray *sectionTypes = @[@"filtersCell", @"checkCell", @"checkCell", @"filtersCell"];
+    FiltersCell *cell = [tableView dequeueReusableCellWithIdentifier:sectionTypes[indexPath.section]];
 
     cell.delegate = self;
 
@@ -93,16 +94,42 @@
     return cell;
 }
 
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // If not categories, Set selected value
+
+
+    //[self.tableView beginUpdates];
+    // do stuff animated
+
+    //[self.tableView endUpdates];
+//}
+
 #pragma mark - Switch cell delegate methods
 
 - (void)filtersCell:(FiltersCell *)filtersCell valueDidChange:(BOOL)value {
     NSIndexPath *indexPath = [self.tableView indexPathForCell:filtersCell];
-
     if (value) {
         [self.selectedFilters[indexPath.section][@"filters"] addObject:self.allFilters[indexPath.section][@"filters"][indexPath.row]];
     } else {
         [self.selectedFilters[indexPath.section][@"filters"] removeObject:self.allFilters[indexPath.section][@"filters"][indexPath.row]];
     }
+}
+
+#pragma mark - Check cell delegate methods
+
+- (void)cellWasTapped:(CheckCell *)checkCell {
+    NSLog(@"CheckCell Was Tapped");
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:checkCell];
+
+    NSMutableDictionary *section = [self.allFilters objectAtIndex:indexPath.section];
+    NSMutableDictionary *row = [section[@"filters"] objectAtIndex:indexPath.row];
+
+    if ([self.selectedFilters[indexPath.section][@"filters"] count] >= 1) {
+        [self.selectedFilters[indexPath.section][@"filters"] removeAllObjects];
+    }
+    [self.selectedFilters[indexPath.section][@"filters"] addObject:row];
+
+    [self.tableView reloadSections:[[NSIndexSet alloc] initWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -115,20 +142,21 @@
 
     for (int i = 0; i < self.selectedFilters.count; i++) {
         NSDictionary *section = self.selectedFilters[i];
+
         if ([section[@"filters"] count] <= 0){
             continue;
         }
 
-        if ([section[@"name"]  isEqual: @"Categories"]) {
+        if ([section[@"id"] isEqual: @"categories"]) {
             if ([section[@"filters"] count] > 0) {
-                [filters setObject:[[NSMutableArray alloc] init] forKey:section[@"name"]];
+                [filters setObject:[[NSMutableArray alloc] init] forKey:section[@"id"]];
 
                 for (NSDictionary *category in section[@"filters"]) {
-                    [filters[section[@"name"]] addObject:category[@"code"]];
+                    [filters[section[@"id"]] addObject:category[@"code"]];
                 }
             }
         } else {
-            [filters setObject:[[NSNumber alloc] initWithInt:[section[@"filters"][0][@"code"] intValue]] forKey:section[@"name"]];
+            [filters setObject:[[NSNumber alloc] initWithInt:[section[@"filters"][0][@"code"] intValue]] forKey:section[@"id"]];
         }
     }
 
@@ -136,6 +164,7 @@
 
     return filters;
 }
+
 
 - (void)onApplyButton {
     [self.delegate filtersViewController:self didChangeFilters:self.filters];
@@ -148,24 +177,34 @@
 
 
 - (void)initAllFilters {
-    self.allFilters =
-    @[@{@"name": @"Sort By", @"filters": self.sortBy},
-      @{@"name": @"Categories", @"filters": self.categories}];
+    NSArray *allFilters = @[@{@"id": @"show_deals", @"name": @"Deals", @"filters":
+                                  @[@{@"name": @"Show Deals", @"code": @"1"}]},
+                            @{@"id": @"sort_by", @"name": @"Sort By", @"filters":
+                                  @[@{@"name": @"Best Matched", @"code": @"0"},
+                                    @{@"name": @"Distance", @"code": @"1"},
+                                    @{@"name": @"Highest Rated", @"code": @"2"}]},
+                            @{@"id": @"distance", @"name": @"Distance", @"filters":
+                                  @[@{@"name": @"Auto", @"code": @""},
+                                    @{@"name": @"1 Mile", @"code": @"1"},
+                                    @{@"name": @"5 Mile", @"code": @"5"},
+                                    @{@"name": @"10 Mile", @"code": @"10"},
+                                    @{@"name": @"25 Miles", @"code": @"25"}]},
+                            @{@"id": @"categories", @"name": @"Categories", @"filters": self.categories}];
+
+    self.allFilters = [[NSMutableArray alloc] initWithArray:allFilters];
 }
 
 - (void)initSelectedFilters {
     NSMutableArray *defaults = [NSMutableArray arrayWithArray:
-                                @[@{@"name": @"Sort By", @"filters": [NSMutableArray array]},
-                                  @{@"name": @"Categories", @"filters": [NSMutableArray array]}]];
+                                @[@{@"id": @"show_deals", @"name": @"Show Deals", @"filters":
+                                        [NSMutableArray array]},
+                                  @{@"id": @"sort_by", @"name": @"Sort By", @"filters":
+                                        [NSMutableArray arrayWithArray:@[@{@"name": @"Best Matched", @"code": @"0"}]]},
+                                  @{@"id": @"distance", @"name": @"Distance", @"filters":
+                                        [NSMutableArray arrayWithArray:@[@{@"name": @"Auto", @"code": @""}]]},
+                                  @{@"id": @"categories", @"name": @"Categories", @"filters": [NSMutableArray array]}]];
 
     self.selectedFilters = defaults;
-}
-
-- (void) initSortBy {
-    self.sortBy =
-    @[@{@"name": @"Best Matched", @"code": @"0"},
-      @{@"name": @"Distance", @"code": @"1"},
-      @{@"name": @"Highest Rated", @"code": @"2"}];
 }
 
 - (void) initCategories {
