@@ -11,13 +11,16 @@
 #import "BusinessCell.h"
 #import "FiltersViewController.h"
 
+
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, FiltersViewControllerDelegate, UISearchBarDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *businesses;
+
 - (void) fetchBusinessesWithQuery:(NSString *)query filters:(NSDictionary *)filters;
 
 @end
+
 
 @implementation MainViewController
 
@@ -84,19 +87,17 @@
                       }];
 }
 
+#pragma mark - Delegate Methods 
+
 - (void)filtersViewController:(FiltersViewController *)filtersViewController didChangeFilters:(NSDictionary *)filters {
-
-    NSLog(@"%@", filters);
     [self fetchBusinessesWithQuery:@"restaurants" filters:filters];
-
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    NSLog(@"SEARCH: %@", searchText);
     [self fetchBusinessesWithQuery:[searchText stringByAppendingString:@" restaurants"]  filters:nil];
 }
 
-#pragma mark - Events Methods
+#pragma mark - Event Methods
 
 - (void)onFiltersTapped {
     FiltersViewController *vc = [[FiltersViewController alloc] init];

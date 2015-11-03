@@ -81,7 +81,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
     NSArray *sectionTypes = @[@"filtersCell", @"checkCell", @"checkCell", @"filtersCell"];
     FiltersCell *cell = [tableView dequeueReusableCellWithIdentifier:sectionTypes[indexPath.section]];
 
@@ -93,16 +92,6 @@
 
     return cell;
 }
-
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // If not categories, Set selected value
-
-
-    //[self.tableView beginUpdates];
-    // do stuff animated
-
-    //[self.tableView endUpdates];
-//}
 
 #pragma mark - Switch cell delegate methods
 
@@ -127,14 +116,10 @@
     if ([self.selectedFilters[indexPath.section][@"filters"] count] >= 1) {
         [self.selectedFilters[indexPath.section][@"filters"] removeAllObjects];
     }
+
     [self.selectedFilters[indexPath.section][@"filters"] addObject:row];
 
     [self.tableView reloadSections:[[NSIndexSet alloc] initWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (NSDictionary *)filters {
@@ -160,11 +145,10 @@
         }
     }
 
-    NSLog(@"Filters: %@", filters);
-
     return filters;
 }
 
+#pragma mark - Event Methods
 
 - (void)onApplyButton {
     [self.delegate filtersViewController:self didChangeFilters:self.filters];
@@ -175,6 +159,12 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Initialization Methods
 
 - (void)initAllFilters {
     NSArray *allFilters = @[@{@"id": @"show_deals", @"name": @"Deals", @"filters":

@@ -24,7 +24,8 @@
 @implementation BusinessCell
 
 - (void)awakeFromNib {
-    // Initialization code
+    self.thumbImageView.layer.cornerRadius = 3;
+    self.thumbImageView.clipsToBounds = YES;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -35,7 +36,7 @@
 
 - (void)setBusiness:(YelpBusiness *)business {
     _business = business;
-    
+
     [self.thumbImageView setImageWithURL:self.business.imageUrl];
     self.nameLabel.text = self.business.name;
     [self.ratingImageView setImageWithURL:self.business.ratingImageUrl];
@@ -43,7 +44,6 @@
     self.reviewCountLabel.text = [NSString stringWithFormat:@"%@ Reviews", self.business.reviewCount];
     self.addressLabel.text = self.business.address;
     self.categoryLabel.text = self.business.categories;
-    
 }
 
 @end
